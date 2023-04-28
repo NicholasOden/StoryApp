@@ -8,6 +8,10 @@ import android.widget.Toast
 import com.example.picodiploma.storyapp.Model.ApiServiceHelper
 import com.example.picodiploma.storyapp.Model.RegisterResponse
 import com.example.picodiploma.storyapp.Model.UserRegistration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,7 +23,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var btnRegister: Button
 
-    private val apiServiceHelper = ApiServiceHelper()
+    private lateinit var apiServiceHelper: ApiServiceHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,8 @@ class SignUpActivity : AppCompatActivity() {
         editTextPassword = findViewById(R.id.editTextPasswordSignUp)
         btnRegister = findViewById(R.id.btnRegister)
 
+        apiServiceHelper = ApiServiceHelper()
+
         btnRegister.setOnClickListener {
             val name = editTextName.text.toString()
             val email = editTextEmail.text.toString()
@@ -37,21 +43,19 @@ class SignUpActivity : AppCompatActivity() {
 
             val userRegistration = UserRegistration(name, email, password)
 
-            apiServiceHelper.registerUser(userRegistration, object : Callback<RegisterResponse> {
-                override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
-                    if (response.isSuccessful) {
-                        val registerResponse = response.body()
-                        Toast.makeText(this@SignUpActivity, "Registration successful: ${registerResponse?.message}", Toast.LENGTH_SHORT).show()
-                    } else {
-                        val errorResponse = response.errorBody()?.string()
-                        Toast.makeText(this@SignUpActivity, "Registration failed: $errorResponse", Toast.LENGTH_SHORT).show()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val registerResponse = apiServiceHelper.registerUser(userRegistration)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@SignUpActivity, "Registration successful: ${registerResponse.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@SignUpActivity, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                    Toast.makeText(this@SignUpActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
         }
     }
 }
+
