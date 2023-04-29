@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:ems="10"
+        android:hint="Name"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/imageViewLogoSignUp"
         app:layout_constraintStart_toStartOf="@+id/imageViewLogoSignUp"
@@ -33,13 +33,13 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTextEmailSignUp"
+        android:id="@+id/editTextEmailLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:ems="10"
+        android:hint="Email"
         android:inputType="textEmailAddress"
-        android:text="Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/imageViewLogoSignUp"
         app:layout_constraintStart_toStartOf="@+id/imageViewLogoSignUp"
@@ -47,17 +47,18 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTextPasswordSignUp"
+        android:id="@+id/editTextPasswordLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:text="Password"
+        android:hint="Password"
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmailSignUp"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="100dp" />
+        app:layout_constraintEnd_toEndOf="@+id/imageViewLogoSignUp"
+        app:layout_constraintStart_toStartOf="@+id/imageViewLogoSignUp"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmailLogin"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnRegister"
@@ -65,8 +66,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="Register"
-        app:layout_constraintEnd_toEndOf="@+id/editTextPasswordSignUp"
-        app:layout_constraintStart_toStartOf="@+id/editTextPasswordSignUp"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordSignUp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/editTextPasswordLogin"
+        app:layout_constraintStart_toStartOf="@+id/editTextPasswordLogin"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordLogin"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

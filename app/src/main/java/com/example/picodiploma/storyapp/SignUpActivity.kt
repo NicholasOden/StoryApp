@@ -1,20 +1,14 @@
 package com.example.picodiploma.storyapp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.picodiploma.storyapp.Model.ApiServiceHelper
-import com.example.picodiploma.storyapp.Model.RegisterResponse
 import com.example.picodiploma.storyapp.Model.UserRegistration
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -30,8 +24,8 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
 
         editTextName = findViewById(R.id.editTextNameSignUp)
-        editTextEmail = findViewById(R.id.editTextEmailSignUp)
-        editTextPassword = findViewById(R.id.editTextPasswordSignUp)
+        editTextEmail = findViewById(R.id.editTextEmailLogin)
+        editTextPassword = findViewById(R.id.editTextPasswordLogin)
         btnRegister = findViewById(R.id.btnRegister)
 
         apiServiceHelper = ApiServiceHelper()
@@ -48,6 +42,9 @@ class SignUpActivity : AppCompatActivity() {
                     val registerResponse = apiServiceHelper.registerUser(userRegistration)
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@SignUpActivity, "Registration successful: ${registerResponse.message}", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -58,4 +55,3 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 }
-

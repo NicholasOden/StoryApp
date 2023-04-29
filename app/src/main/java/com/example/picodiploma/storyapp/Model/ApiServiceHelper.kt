@@ -24,14 +24,14 @@ class ApiServiceHelper {
         apiService = retrofit.create(ApiService::class.java)
     }
 
-    /*suspend fun login(email: String, password: String): LoginResponse {
+    suspend fun login(email: String, password: String): LoginResponse {
         val loginRequest = LoginRequest(email, password)
-        val response = apiService.login(loginRequest)
+        val response = apiService.loginUser(loginRequest)
         if (response.isSuccessful) {
-            token = response.body()?.token
+            token = response.body()?.loginResult?.token
         }
         return response.body() ?: LoginResponse(error = true, message = "Unknown error")
-    }*/
+    }
 
     suspend fun registerUser(userRegistration: UserRegistration): RegisterResponse {
         return apiService.registerUser(userRegistration)
