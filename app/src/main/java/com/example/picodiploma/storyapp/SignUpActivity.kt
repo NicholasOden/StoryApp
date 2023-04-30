@@ -28,7 +28,10 @@ class SignUpActivity : AppCompatActivity() {
         editTextPassword = findViewById(R.id.editTextPasswordLogin)
         btnRegister = findViewById(R.id.btnRegister)
 
-        apiServiceHelper = ApiServiceHelper()
+        val sharedPreferences = getSharedPreferences("storyapp", MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", "")
+
+        apiServiceHelper = ApiServiceHelper(token)
 
         btnRegister.setOnClickListener {
             val name = editTextName.text.toString()
@@ -41,14 +44,23 @@ class SignUpActivity : AppCompatActivity() {
                 try {
                     val registerResponse = apiServiceHelper.registerUser(userRegistration)
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@SignUpActivity, "Registration successful: ${registerResponse.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            "Registration successful: ${registerResponse.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@SignUpActivity, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            "Registration failed: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

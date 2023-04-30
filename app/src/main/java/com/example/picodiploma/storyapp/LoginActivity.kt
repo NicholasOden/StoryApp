@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var btnLogin: Button
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -44,16 +43,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
-    override fun onBackPressed() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-        finish()
-    }
+
     private fun login(email: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val apiServiceHelper = ApiServiceHelper()
+                val apiServiceHelper = ApiServiceHelper(null)
                 val loginResponse = apiServiceHelper.login(email, password)
                 if (!loginResponse.error) {
                     val token = loginResponse.loginResult?.token
