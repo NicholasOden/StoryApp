@@ -6,8 +6,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.picodiploma.storyapp.Model.ApiServiceHelper
-import com.example.picodiploma.storyapp.Model.UserRegistration
+import com.example.picodiploma.storyapp.api.ApiServiceHelper
+import com.example.picodiploma.storyapp.api.Response.UserRegistration
 import kotlinx.coroutines.*
 
 class SignUpActivity : AppCompatActivity() {

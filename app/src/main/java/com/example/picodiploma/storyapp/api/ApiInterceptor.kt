@@ -1,4 +1,4 @@
-package com.example.picodiploma.storyapp.Model
+package com.example.picodiploma.storyapp.api
 
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -9,7 +9,7 @@ class ApiInterceptor(private val token: String?) : Interceptor {
 
         if (token != null) {
             request = request.newBuilder()
-                .addHeader("Authorization","Bearer $token")
+                //.addHeader("Authorization","Bearer $token")
                 .build()
         }
 

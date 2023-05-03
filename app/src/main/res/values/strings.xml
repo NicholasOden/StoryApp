@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StoryApp</string>
+    <string name="post" />
+    <string name="description">deskripsi</string>
 </resources>

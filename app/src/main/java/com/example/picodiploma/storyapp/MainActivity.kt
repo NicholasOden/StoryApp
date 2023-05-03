@@ -1,5 +1,6 @@
 package com.example.picodiploma.storyapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +8,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.picodiploma.storyapp.Adapter.StoryAdapter
-import com.example.picodiploma.storyapp.Model.ApiServiceHelper
+import com.example.picodiploma.storyapp.api.ApiServiceHelper
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +55,12 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+
+        findViewById<FloatingActionButton>(R.id.fab_create_story).setOnClickListener {
+            // Open the create story activity
+            val intent = Intent(this, CreateStoryActivity::class.java)
+            startActivity(intent)
         }
     }
 }

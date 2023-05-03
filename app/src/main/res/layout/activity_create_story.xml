@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateStoryActivity">
+
+    <ImageView
+        android:id="@+id/imageViewPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="24dp"
+        android:padding="8dp"
+        android:scaleType="center"
+        app:layout_constraintBottom_toTopOf="@id/editTextPostStory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="#C5C0C0"
+        />
+
+    <EditText
+        android:id="@+id/editTextPostStory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="start"
+        android:hint="@string/description"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@id/btnPost"
+        app:layout_constraintEnd_toEndOf="@id/imageViewPreview"
+        app:layout_constraintStart_toStartOf="@id/imageViewPreview"
+        app:layout_constraintTop_toBottomOf="@id/imageViewPreview" />
+
+    <Button
+        android:id="@+id/btnPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:backgroundTint="#FF5722"
+        android:text="Post"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextPostStory" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

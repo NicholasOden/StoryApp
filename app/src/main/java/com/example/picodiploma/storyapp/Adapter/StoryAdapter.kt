@@ -1,5 +1,6 @@
 package com.example.picodiploma.storyapp.Adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,9 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.picodiploma.storyapp.Model.Story
+import com.example.picodiploma.storyapp.DetailActivity
+import com.example.picodiploma.storyapp.api.Response.Story
 import com.example.picodiploma.storyapp.R
-import kotlin.text.StringBuilder
 
 class StoryAdapter(private var storyList: List<Story>) :
     RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
@@ -46,7 +47,10 @@ class StoryAdapter(private var storyList: List<Story>) :
                 holder.imageViewMain.setImageResource(R.drawable.logo)
             }
             holder.cardView.setOnClickListener {
-                // Handle story item click
+                val context = holder.cardView.context
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("STORY_ID", story?.id)
+                context.startActivity(intent)
             }
         }
     }
