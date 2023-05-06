@@ -1,45 +1,42 @@
 package com.example.picodiploma.storyapp
 
-
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
+import androidx.core.content.FileProvider
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import android.app.Application
-import android.graphics.BitmapFactory
-import java.io.FileOutputStream
+import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
-private const val FILENAME_FORMAT = "dd-MMM-yyyy"
-
-val timeStamp: String = SimpleDateFormat(
-    FILENAME_FORMAT,
-    Locale.US
-).format(System.currentTimeMillis())
-
-
-fun createFile(application: Application): File {
-    val mediaDir = application.externalMediaDirs.firstOrNull()?.let {
-        File(it, application.resources.getString(R.string.app_name)).apply { mkdirs() }
-    }
-
-    val outputDirectory = if (
-        mediaDir != null && mediaDir.exists()
-    ) mediaDir else application.filesDir
-
-    return File(outputDirectory, "$timeStamp.jpg")
+fun createImageFile(context: Context): Uri? {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val imageFileName = "JPEG_${timeStamp}_"
+    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFile = File.createTempFile(
+        imageFileName,
+        ".jpg",
+        storageDir
+    )
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
 }
 
-fun rotateFile(file: File, isBackCamera: Boolean = false) {
-    val matrix = Matrix()
-    val bitmap = BitmapFactory.decodeFile(file.path)
-    val rotation = if (isBackCamera) 90f else -90f
-    matrix.postRotate(rotation)
-    if (!isBackCamera) {
-        matrix.postScale(-1f, 1f, bitmap.width / 2f, bitmap.height / 2f)
+//Permission Related
+
+fun checkPermission(context: Context, permissionArray: Array<String>): Boolean {
+    for (permission in permissionArray) {
+        if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+            return false
+        }
     }
-    val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    result.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
+    return true
 }
+
+fun requestPermission(activity: AppCompatActivity, permissionArray: Array<String>, requestCode: Int) {
+    ActivityCompat.requestPermissions(activity, permissionArray, requestCode)
+}
+
+

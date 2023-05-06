@@ -1,7 +1,6 @@
 package com.example.picodiploma.storyapp
 
-
-import android.content.ContentValues
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,11 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.picodiploma.storyapp.databinding.ActivityCreateStoryBinding
-import android.Manifest
-import android.service.controls.ControlsProviderService.TAG
-import android.util.Log
 import java.io.IOException
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreateStoryActivity : AppCompatActivity() {
 
@@ -54,11 +51,10 @@ class CreateStoryActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "New Picture")
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
-        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        // Create a temporary file to store the captured image
+        val imageUri = createImageFile(this)
 
+        // Launch the camera app and pass the URI of the temporary file as an extra
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
@@ -97,26 +93,24 @@ class CreateStoryActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        Log.d(TAG, "requestCode = $requestCode, resultCode = $resultCode, data = $data")
-
-        if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
-            val imageUri = data?.data
-            if (imageUri != null) {
-                try {
-                    val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                    binding.imageViewPreview.setImageBitmap(imageBitmap)
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
+        if (requestCode == IMAGE_CAPTURE_CODE) {
+            if (resultCode == RESULT_OK) {
+                val imageUri = data?.data
+                if (imageUri != null) {
+                    try {
+                        val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                        binding.imageViewPreview.setImageBitmap(imageBitmap)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Image capture failed", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, "Image capture failed", Toast.LENGTH_SHORT).show()
         }
     }
 
-
 }
-
