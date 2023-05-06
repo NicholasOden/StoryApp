@@ -12,8 +12,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.picodiploma.storyapp.databinding.ActivityCreateStoryBinding
 import android.Manifest
-
-
+import android.service.controls.ControlsProviderService.TAG
+import android.util.Log
+import java.io.IOException
 
 
 class CreateStoryActivity : AppCompatActivity() {
@@ -96,11 +97,26 @@ class CreateStoryActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        Log.d(TAG, "requestCode = $requestCode, resultCode = $resultCode, data = $data")
+
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
             val imageUri = data?.data
-            val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-            binding.imageViewPreview.setImageBitmap(imageBitmap)
+            if (imageUri != null) {
+                try {
+                    val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                    binding.imageViewPreview.setImageBitmap(imageBitmap)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Image capture failed", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 }
 
