@@ -71,14 +71,6 @@ data class AddNewStoryResponse(
     val message: String
 )
 
-data class AddNewStoryRequest(
-    val name: String,
-    val description: String,
-    val photo: String,
-    val lat: Float?,
-    val lon: Float?
-)
-
 
 
 
