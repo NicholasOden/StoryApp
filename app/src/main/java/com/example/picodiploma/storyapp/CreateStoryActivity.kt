@@ -6,15 +6,16 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.service.controls.ControlsProviderService.TAG
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.picodiploma.storyapp.databinding.ActivityCreateStoryBinding
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CreateStoryActivity : AppCompatActivity() {
 
@@ -36,6 +37,7 @@ class CreateStoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         binding.imageViewPreview.setOnClickListener {
             if (checkPermission(permissions)) {
@@ -104,17 +106,16 @@ class CreateStoryActivity : AppCompatActivity() {
 
         if (requestCode == IMAGE_CAPTURE_CODE) {
             if (resultCode == RESULT_OK) {
-                if (imageUri != null) {
-                    Log.d("CreateStoryActivity", "Image URI: ${imageUri.toString()}")
-                    try {
-                        val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri!!)
-                        binding.imageViewPreview.setImageBitmap(imageBitmap)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show()
+                // Load the captured image from the URI
+                try {
+                    // Load and resize the image using Glide
+                    val glide = Glide.with(this)
+                    val requestBuilder = glide.asBitmap().load(imageUri).apply(RequestOptions().override(1024, 1024))
+                    requestBuilder.apply(RequestOptions().centerCrop())
+                    requestBuilder.into(binding.imageViewPreview)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Image capture failed", Toast.LENGTH_SHORT).show()
