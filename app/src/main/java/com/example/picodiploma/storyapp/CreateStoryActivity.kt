@@ -3,8 +3,10 @@ package com.example.picodiploma.storyapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,6 +19,9 @@ import java.util.*
 class CreateStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateStoryBinding
+
+    private var imageUri: Uri? = null
+
 
     private val permissions = arrayOf(
         Manifest.permission.CAMERA,
@@ -52,12 +57,16 @@ class CreateStoryActivity : AppCompatActivity() {
 
     private fun openCamera() {
         // Create a temporary file to store the captured image
-        val imageUri = createImageFile(this)
+        imageUri = createImageFile(this)
 
-        // Launch the camera app and pass the URI of the temporary file as an extra
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
+        if (imageUri != null) {
+            // Launch the camera app and pass the URI of the temporary file as an extra
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
+        } else {
+            Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -95,10 +104,10 @@ class CreateStoryActivity : AppCompatActivity() {
 
         if (requestCode == IMAGE_CAPTURE_CODE) {
             if (resultCode == RESULT_OK) {
-                val imageUri = data?.data
                 if (imageUri != null) {
+                    Log.d("CreateStoryActivity", "Image URI: ${imageUri.toString()}")
                     try {
-                        val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                        val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri!!)
                         binding.imageViewPreview.setImageBitmap(imageBitmap)
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -112,5 +121,7 @@ class CreateStoryActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
 }

@@ -7,10 +7,6 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 
 fun createImageFile(context: Context): Uri? {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -22,21 +18,6 @@ fun createImageFile(context: Context): Uri? {
         storageDir
     )
     return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
-}
-
-//Permission Related
-
-fun checkPermission(context: Context, permissionArray: Array<String>): Boolean {
-    for (permission in permissionArray) {
-        if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-    }
-    return true
-}
-
-fun requestPermission(activity: AppCompatActivity, permissionArray: Array<String>, requestCode: Int) {
-    ActivityCompat.requestPermissions(activity, permissionArray, requestCode)
 }
 
 
