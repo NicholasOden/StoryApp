@@ -36,6 +36,8 @@ class ApiServiceHelper(private val token: String?) {
         apiService = retrofit.create(ApiService::class.java)
     }
 
+    fun getService(): ApiService = apiService
+
     suspend fun login(email: String, password: String): LoginResponse {
         val loginRequest = LoginRequest(email, password)
         val response = apiService.loginUser(loginRequest)
@@ -63,8 +65,7 @@ class ApiServiceHelper(private val token: String?) {
         return response.body() ?: DetailResponse(error = true, message = "Unknown error", data = null)
     }
 
-
-    suspend fun uploadStory(description: String, imageFile: File, lat: Float?, lon: Float?): AddNewStoryResponse {
+    /*fun uploadStoryToServer(description: String, imageFile: File, lat: Float?, lon: Float?): AddNewStoryResponse {
         val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
         val filePart = MultipartBody.Part.createFormData("photo", imageFile.name, requestBody)
         val descriptionPart = RequestBody.create("text/plain".toMediaTypeOrNull(), description)
@@ -80,7 +81,23 @@ class ApiServiceHelper(private val token: String?) {
         } catch (e: Exception) {
             throw Exception("Failed to upload story", e)
         }
+    }*/
+     */
+
+    fun uploadStory(description: RequestBody, imageFile: File, lat: RequestBody? = null, lon: RequestBody? = null): AddNewStoryResponse {
+        val authorization = "Bearer $token"
+        val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "photo",
+            imageFile.name,
+            requestImageFile
+        )
+
+        return apiService.uploadStory(authorization, description, imageMultipart, lat, lon)
     }
+
+
+
 }
 
 
