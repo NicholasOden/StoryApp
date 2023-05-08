@@ -14,7 +14,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.picodiploma.storyapp.api.ApiServiceHelper
 import com.example.picodiploma.storyapp.databinding.ActivityCreateStoryBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.File
 import java.io.IOException
 
 class CreateStoryActivity : AppCompatActivity() {
@@ -22,6 +29,7 @@ class CreateStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateStoryBinding
 
     private var imageUri: Uri? = null
+    private var token: String? = null
 
 
     private val permissions = arrayOf(
@@ -38,6 +46,9 @@ class CreateStoryActivity : AppCompatActivity() {
         binding = ActivityCreateStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val sharedPrefs = getSharedPreferences("storyapp", MODE_PRIVATE)
+        token = sharedPrefs.getString("token", null)
+
 
         binding.imageViewPreview.setOnClickListener {
             if (checkPermission(permissions)) {
@@ -52,9 +63,30 @@ class CreateStoryActivity : AppCompatActivity() {
             if (description.isEmpty()) {
                 Toast.makeText(this, "Please fill in the description", Toast.LENGTH_SHORT).show()
             } else {
-                // Call your API to upload the story
+                val imageFile = File(imageUri?.path)
+                val apiServiceHelper = ApiServiceHelper(token)
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    try {
+                        val response = apiServiceHelper.uploadStory(description, imageFile, null, null)
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@CreateStoryActivity, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    } catch (e: Exception) {
+                        val errorMessage = e.message ?: "Unknown error"
+                        val errorBody = (e as? HttpException)?.response()?.errorBody()?.string()
+                        if (errorBody != null) {
+                            Log.e("ApiServiceHelper", "Failed to upload story: $errorBody")
+                        }
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@CreateStoryActivity, "Failed to upload story: $errorMessage", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                }
             }
-        }
     }
 
     private fun openCamera() {
@@ -89,17 +121,15 @@ class CreateStoryActivity : AppCompatActivity() {
     }
 
     private fun checkPermission(permissionArray: Array<String>): Boolean {
-        for (permission in permissionArray) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
+        return permissionArray.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-        return true
     }
 
     private fun requestPermission(permissionArray: Array<String>, requestCode: Int) {
         ActivityCompat.requestPermissions(this, permissionArray, requestCode)
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

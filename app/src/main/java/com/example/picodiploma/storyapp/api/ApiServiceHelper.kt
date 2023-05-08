@@ -63,42 +63,23 @@ class ApiServiceHelper(private val token: String?) {
         return response.body() ?: DetailResponse(error = true, message = "Unknown error", data = null)
     }
 
-    fun createAddStoryRequest(token: String, name: String, description: String, imageFile: File, lat: Float?, lon: Float?): Request {
-        val requestBody = getAddStoryRequestBody(name, description, imageFile, lat, lon)
-        return Request.Builder()
-            .url(ApiServiceHelper.API_ENDPOINT + "/stories")
-            .post(requestBody)
-            .header("Authorization", "Bearer $token")
-            .build()
-    }
 
-    private fun getAddStoryRequestBody(name: String, description: String, imageFile: File, lat: Float?, lon: Float?): MultipartBody {
-        return MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("name", name)
-            .addFormDataPart("description", description)
-            .addFormDataPart(
-                "photo",
-                imageFile.name,
-                imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-            )
-            .apply {
-                lat?.let { addFormDataPart("lat", it.toString()) }
-                lon?.let { addFormDataPart("lon", it.toString()) }
-            }
-            .build()
-    }
+    suspend fun uploadStory(description: String, imageFile: File, lat: Float?, lon: Float?): AddNewStoryResponse {
+        val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+        val filePart = MultipartBody.Part.createFormData("photo", imageFile.name, requestBody)
+        val descriptionPart = RequestBody.create("text/plain".toMediaTypeOrNull(), description)
+        val latPart =
+            lat?.let { RequestBody.create("text/plain".toMediaTypeOrNull(), it.toString()) }
+        val lonPart =
+            lon?.let { RequestBody.create("text/plain".toMediaTypeOrNull(), it.toString()) }
 
-    suspend fun uploadStory(name: String, description: String, imageFile: File, lat: Float?, lon: Float?): AddNewStoryResponse {
-        val request = createAddStoryRequest(token ?: "", name, description, imageFile, lat, lon)
-        val response = withContext(Dispatchers.IO) {
-            OkHttpClient().newCall(request).execute()
+        return try {
+            val response =
+                apiService.uploadStory("Bearer $token", descriptionPart, filePart, latPart, lonPart)
+            response
+        } catch (e: Exception) {
+            throw Exception("Failed to upload story", e)
         }
-        if (!response.isSuccessful) {
-            throw Exception("Failed to upload story")
-        }
-        val responseBody = response.body?.string()
-        return Gson().fromJson(responseBody, AddNewStoryResponse::class.java)
     }
 }
 
