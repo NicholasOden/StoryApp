@@ -70,6 +70,13 @@ class CreateStoryActivity : AppCompatActivity() {
                     try {
                         val compressedImageFile = imageFile?.reduceFileImage(1000000) // maximum file size of 1MB
                         if (compressedImageFile != null) {
+                            Log.d(TAG, "Compressed image file path: ${compressedImageFile.path}")
+                            if (compressedImageFile.exists()) {
+                                Log.d(TAG, "Compressed image file exists")
+                            } else {
+                                Log.e(TAG, "Compressed image file not found")
+                            }
+
                             val response = apiServiceHelper.uploadStory(description, compressedImageFile, null, null)
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(this@CreateStoryActivity, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
@@ -95,6 +102,7 @@ class CreateStoryActivity : AppCompatActivity() {
                         }
                     }
                 }
+
             }
         }
 
@@ -105,6 +113,7 @@ class CreateStoryActivity : AppCompatActivity() {
         imageUri = createImageFile(this)
 
         if (imageUri != null) {
+            Log.d(TAG, "Image file path: ${imageUri?.path}")
             // Launch the camera app and pass the URI of the temporary file as an extra
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
@@ -113,6 +122,7 @@ class CreateStoryActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
