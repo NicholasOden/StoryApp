@@ -68,10 +68,17 @@ class CreateStoryActivity : AppCompatActivity() {
 
                 GlobalScope.launch(Dispatchers.IO) {
                     try {
-                        val response = apiServiceHelper.uploadStory(description, imageFile, null, null)
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(this@CreateStoryActivity, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
-                            finish()
+                        val compressedImageFile = imageFile?.reduceFileImage(1000000) // maximum file size of 1MB
+                        if (compressedImageFile != null) {
+                            val response = apiServiceHelper.uploadStory(description, compressedImageFile, null, null)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@CreateStoryActivity, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@CreateStoryActivity, "Failed to compress image file", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     } catch (e: Exception) {
                         val errorMessage = e.message ?: "Unknown error"
@@ -82,11 +89,15 @@ class CreateStoryActivity : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(this@CreateStoryActivity, "Failed to upload story: $errorMessage", Toast.LENGTH_SHORT).show()
                         }
+                    } catch (e: IOException) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@CreateStoryActivity, "Failed to read image file", Toast.LENGTH_SHORT).show()
+                        }
                     }
-
-                }
                 }
             }
+        }
+
     }
 
     private fun openCamera() {
