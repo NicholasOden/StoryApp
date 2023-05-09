@@ -10,9 +10,11 @@ class ApiConfig {
 
     private val API_ENDPOINT = "https://story-api.dicoding.dev/v1/"
 
-    fun getApiService(token: String?): ApiService {
+    fun getApiService(): ApiService {
+        val loggingInterceptor =
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addInterceptor(loggingInterceptor)
             .build()
 
         val retrofit = Retrofit.Builder()

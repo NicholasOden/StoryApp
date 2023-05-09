@@ -12,7 +12,7 @@ class ApiServiceHelper(private val token: String?) {
 
     init {
         val apiConfig = ApiConfig()
-        apiService = apiConfig.getApiService(token)
+        apiService = apiConfig.getApiService()
     }
 
     suspend fun login(email: String, password: String): LoginResponse {
