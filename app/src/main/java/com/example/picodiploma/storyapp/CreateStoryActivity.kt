@@ -20,7 +20,10 @@ import com.dicoding.picodiploma.storyapp.reduceFileImage
 import com.example.picodiploma.storyapp.api.ApiServiceHelper
 import com.example.picodiploma.storyapp.api.Response.AddNewStoryResponse
 import com.example.picodiploma.storyapp.databinding.ActivityCreateStoryBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -57,7 +60,7 @@ class CreateStoryActivity : AppCompatActivity() {
         }
 
         binding.imageViewPreview.setOnClickListener { startTakePhoto() }
-        //binding.btnPost.setOnClickListener { uploadImage() }
+        binding.btnPost.setOnClickListener { uploadImage() }
     }
 
     override fun onRequestPermissionsResult(
@@ -109,47 +112,49 @@ class CreateStoryActivity : AppCompatActivity() {
             }
         }
     }
-/*
+
     private fun uploadImage() {
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
+            val description = binding.editTextPostStory.text.toString()
+                .toRequestBody("text/plain".toMediaTypeOrNull())
 
-            val description = binding.editTextPostStory.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            val apiServiceHelper = ApiServiceHelper(getToken())
+            val uploadStoryRequest = apiServiceHelper.uploadStory(
+                description,
+                file,
+                null,
+                null
+            )
 
-            val apiService = ApiServiceHelper(getToken())
-            val uploadStoryRequest = apiService.uploadStory(description, file, null, null)
-
-            uploadStoryRequest.enqueue(object : Callback<AddNewStoryResponse> {
-                override fun onResponse(
-                    call: Call<AddNewStoryResponse>,
-                    response: Response<AddNewStoryResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        if (responseBody != null && !responseBody.error) {
-                            Toast.makeText(
-                                this@CreateStoryActivity,
-                                responseBody.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+            GlobalScope.launch(Dispatchers.Main) {
+                try {
+                    val response = withContext(Dispatchers.IO) {
+                        uploadStoryRequest
+                    }
+                    if (response.error) {
+                        Toast.makeText(
+                            this@CreateStoryActivity,
+                            response.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         Toast.makeText(
                             this@CreateStoryActivity,
-                            response.message(),
+                            response.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }
-
-                override fun onFailure(call: Call<AddNewStoryResponse>, t: Throwable) {
+                } catch (e: Exception) {
                     Toast.makeText(
                         this@CreateStoryActivity,
-                        t.message,
+                        "Failed to upload story: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            })
+
+            }
+
         } else {
             Toast.makeText(
                 this@CreateStoryActivity,
@@ -157,12 +162,10 @@ class CreateStoryActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+
     }
 
-*/
-
-
-    private fun getToken(): String? {
+        private fun getToken(): String? {
         val sharedPreferences = getSharedPreferences("storyapp", MODE_PRIVATE)
         return sharedPreferences.getString("token", "")
     }

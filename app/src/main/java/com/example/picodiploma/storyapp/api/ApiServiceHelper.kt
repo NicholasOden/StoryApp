@@ -14,29 +14,7 @@ import java.io.File
 
 class ApiServiceHelper(private val token: String?) {
 
-    private val apiService: ApiService
-
-    companion object {
-        const val API_ENDPOINT = "https://story-api.dicoding.dev/v1/"
-    }
-
-    init {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(ApiInterceptor(token))
-            .build()
-        val retrofit = Retrofit.Builder()
-            .baseUrl(API_ENDPOINT)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-        apiService = retrofit.create(ApiService::class.java)
-    }
-
-    fun getService(): ApiService = apiService
+    private val apiService: ApiService = ApiConfig().getApiService()
 
     suspend fun login(email: String, password: String): LoginResponse {
         val loginRequest = LoginRequest(email, password)
