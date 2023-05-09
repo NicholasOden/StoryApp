@@ -1,5 +1,6 @@
 package com.example.picodiploma.storyapp.api
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -7,23 +8,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiConfig {
 
-    companion object {
-        private const val API_ENDPOINT = "https://story-api.dicoding.dev/v1/"
-    }
+    private val API_ENDPOINT = "https://story-api.dicoding.dev/v1/"
 
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        })
-        .build()
+    fun getApiService(token: String?): ApiService {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(API_ENDPOINT)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(API_ENDPOINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory()) // add this line to use CoroutineCallAdapterFactory
+            .client(client)
+            .build()
 
-    fun getApiService(): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 }
+
+

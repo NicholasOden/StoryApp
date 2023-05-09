@@ -1,20 +1,19 @@
 package com.example.picodiploma.storyapp.api
 
 import com.example.picodiploma.storyapp.api.Response.*
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 class ApiServiceHelper(private val token: String?) {
 
-    private val apiService: ApiService = ApiConfig().getApiService()
+    private val apiService: ApiService
+
+    init {
+        val apiConfig = ApiConfig()
+        apiService = apiConfig.getApiService(token)
+    }
 
     suspend fun login(email: String, password: String): LoginResponse {
         val loginRequest = LoginRequest(email, password)
@@ -43,25 +42,6 @@ class ApiServiceHelper(private val token: String?) {
         return response.body() ?: DetailResponse(error = true, message = "Unknown error", data = null)
     }
 
-    /*fun uploadStoryToServer(description: String, imageFile: File, lat: Float?, lon: Float?): AddNewStoryResponse {
-        val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
-        val filePart = MultipartBody.Part.createFormData("photo", imageFile.name, requestBody)
-        val descriptionPart = RequestBody.create("text/plain".toMediaTypeOrNull(), description)
-        val latPart =
-            lat?.let { RequestBody.create("text/plain".toMediaTypeOrNull(), it.toString()) }
-        val lonPart =
-            lon?.let { RequestBody.create("text/plain".toMediaTypeOrNull(), it.toString()) }
-
-        return try {
-            val response =
-                apiService.uploadStory("Bearer $token", descriptionPart, filePart, latPart, lonPart)
-            response
-        } catch (e: Exception) {
-            throw Exception("Failed to upload story", e)
-        }
-    }*/
-     */
-
     fun uploadStory(description: RequestBody, imageFile: File, lat: RequestBody? = null, lon: RequestBody? = null): AddNewStoryResponse {
         val authorization = "Bearer $token"
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
@@ -73,9 +53,4 @@ class ApiServiceHelper(private val token: String?) {
 
         return apiService.uploadStory(authorization, description, imageMultipart, lat, lon)
     }
-
-
-
 }
-
-
