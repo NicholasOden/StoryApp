@@ -120,15 +120,15 @@ class CreateStoryActivity : AppCompatActivity() {
                 .toRequestBody("text/plain".toMediaTypeOrNull())
 
             val apiServiceHelper = ApiServiceHelper(getToken())
-            val uploadStoryRequest = apiServiceHelper.uploadStory(
-                description,
-                file,
-                null,
-                null
-            )
 
             GlobalScope.launch(Dispatchers.Main) {
                 try {
+                    val uploadStoryRequest = apiServiceHelper.uploadStory(
+                        description,
+                        file,
+                        null,
+                        null
+                    )
                     val response = withContext(Dispatchers.IO) {
                         uploadStoryRequest
                     }
@@ -158,7 +158,7 @@ class CreateStoryActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this@CreateStoryActivity,
-                "Silakan masukkan berkas gambar terlebih dahulu.",
+                "Please insert image first",
                 Toast.LENGTH_SHORT
             ).show()
         }

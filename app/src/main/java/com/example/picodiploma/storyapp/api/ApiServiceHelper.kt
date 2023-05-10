@@ -42,7 +42,7 @@ class ApiServiceHelper(private val token: String?) {
         return response.body() ?: DetailResponse(error = true, message = "Unknown error", data = null)
     }
 
-    fun uploadStory(description: RequestBody, imageFile: File, lat: RequestBody? = null, lon: RequestBody? = null): AddNewStoryResponse {
+    suspend fun uploadStory(description: RequestBody, imageFile: File, lat: RequestBody? = null, lon: RequestBody? = null): AddNewStoryResponse {
         val authorization = "Bearer $token"
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
