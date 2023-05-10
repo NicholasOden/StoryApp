@@ -15,17 +15,26 @@ import kotlinx.coroutines.withContext
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var btnRegister: Button
-
     private lateinit var editTextEmail: EditText
     private lateinit var editTextPassword: EditText
     private lateinit var btnLogin: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if token exists
+        val sharedPreferences = getSharedPreferences("storyapp", MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+        if (token != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         btnRegister = findViewById(R.id.btnRegister)
-
         editTextEmail = findViewById(R.id.editTextEmailLogin)
         editTextPassword = findViewById(R.id.editTextPasswordLogin)
         btnLogin = findViewById(R.id.btnLogin)
@@ -41,7 +50,6 @@ class LoginActivity : AppCompatActivity() {
 
             login(email, password)
         }
-
     }
 
     private fun login(email: String, password: String) {
@@ -79,4 +87,5 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
 

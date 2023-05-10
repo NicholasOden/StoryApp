@@ -144,6 +144,9 @@ class CreateStoryActivity : AppCompatActivity() {
                             response.message,
                             Toast.LENGTH_SHORT
                         ).show()
+                        val intent = Intent(this@CreateStoryActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 } catch (e: Exception) {
                     Toast.makeText(
@@ -152,9 +155,7 @@ class CreateStoryActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-
             }
-
         } else {
             Toast.makeText(
                 this@CreateStoryActivity,
@@ -162,10 +163,10 @@ class CreateStoryActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
     }
 
-        private fun getToken(): String? {
+
+    private fun getToken(): String? {
         val sharedPreferences = getSharedPreferences("storyapp", MODE_PRIVATE)
         return sharedPreferences.getString("token", "")
     }
