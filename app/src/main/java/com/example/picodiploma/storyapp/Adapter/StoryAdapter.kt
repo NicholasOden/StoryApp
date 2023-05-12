@@ -1,5 +1,6 @@
 package com.example.picodiploma.storyapp.Adapter
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.picodiploma.storyapp.DetailActivity
@@ -50,7 +53,14 @@ class StoryAdapter(private var storyList: List<Story>) :
                 val context = holder.cardView.context
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra("STORY_ID", story?.id)
-                context.startActivity(intent)
+
+                // Shared element transition setup
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    context as Activity,
+                    holder.imageViewMain,
+                    "storyImage"
+                )
+                ActivityCompat.startActivity(context, intent, options.toBundle())
             }
         }
     }

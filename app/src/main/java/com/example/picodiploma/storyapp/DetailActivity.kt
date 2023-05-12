@@ -2,8 +2,10 @@ package com.example.picodiploma.storyapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.util.Log
 import android.view.MenuItem
+import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +25,14 @@ class DetailActivity : AppCompatActivity() {
     private var storyId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Enable content transitions
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+        window.sharedElementEnterTransition = TransitionInflater.from(this)
+            .inflateTransition(R.transition.shared_element_transition)
+        window.sharedElementExitTransition = TransitionInflater.from(this)
+            .inflateTransition(R.transition.shared_element_transition)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
