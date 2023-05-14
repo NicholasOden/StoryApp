@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.picodiploma.storyapp.DetailActivity
 import com.example.picodiploma.storyapp.api.Response.Story
 import com.example.picodiploma.storyapp.R
+import androidx.core.util.Pair
 
 class StoryAdapter(private var storyList: List<Story>) :
     RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
@@ -57,11 +58,13 @@ class StoryAdapter(private var storyList: List<Story>) :
                 // Shared element transition setup
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     context as Activity,
-                    holder.imageViewMain,
-                    "storyImage"
+                    Pair.create(holder.imageViewMain, "storyImage"),
+                    Pair.create(holder.textViewTitleMain, "name"),
+                    Pair.create(holder.textViewDescriptionMain, "description")
                 )
                 ActivityCompat.startActivity(context, intent, options.toBundle())
             }
+
         }
     }
 

@@ -28,10 +28,6 @@ class DetailActivity : AppCompatActivity() {
 
         // Enable content transitions
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-        window.sharedElementEnterTransition = TransitionInflater.from(this)
-            .inflateTransition(R.transition.shared_element_transition)
-        window.sharedElementExitTransition = TransitionInflater.from(this)
-            .inflateTransition(R.transition.shared_element_transition)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)

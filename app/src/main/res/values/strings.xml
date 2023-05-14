@@ -4,4 +4,5 @@
     <string name="description">deskripsi</string>
     <string name="sample_story_title">Sample Story Title</string>
     <string name="sample_story_content">Sample Story content</string>
+    <string name="fab_story" />
 </resources>
