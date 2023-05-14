@@ -22,16 +22,21 @@
 
             <ImageView
                 android:id="@+id/imageViewDetail"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/logo"
-                android:transitionName="profil"/>
+                android:transitionName="storyImage"
+                app:srcCompat="@drawable/logo" />
 
             <TextView
                 android:id="@+id/textViewDetailDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="sans-serif"
                 android:text="TextView"
                 android:textColor="#252525"
@@ -43,14 +48,18 @@
                 android:id="@+id/textViewDetailName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="TextView"
                 android:textSize="16sp"
-                android:transitionName="name"/>
+                android:transitionName="name" />
 
             <TextView
                 android:id="@+id/textViewDetailCreated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:gravity="left"
                 android:text="TextView" />
         </LinearLayout>

@@ -2,4 +2,6 @@
     <string name="app_name">StoryApp</string>
     <string name="post" />
     <string name="description">deskripsi</string>
+    <string name="sample_story_title">Sample Story Title</string>
+    <string name="sample_story_content">Sample Story content</string>
 </resources>
